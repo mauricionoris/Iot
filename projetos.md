@@ -102,6 +102,10 @@ Atuadores são componentes que realizam ações físicas com base em comandos re
 ![fig1](./img/ESP32Arq.png)
 
 
+Claro! Abaixo está um conteúdo completo e didático sobre **MQTT**, com foco em aplicações para **IoT (Internet das Coisas)**.
+
+---
+
 # 📡 Introdução ao MQTT para IoT
 
 ## 🔍 O que é MQTT?
