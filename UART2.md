@@ -111,3 +111,50 @@ void app_main(void) {
 - [Exemplo de comunicação UART0 para UART1](https://wokwi.com/projects/420603062355148801)
 - [UART para computador Terminal](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/establish-serial-connection.html)
 - [UART Communication with Other Devices](https://randomnerdtutorials.com/esp32-uart-communication-serial-arduino/)
+
+
+## Bit de paridade
+
+O bit de paridade na USART2 é utilizado como um método simples de detecção de erros na comunicação serial. Ele serve para verificar se os dados transmitidos chegaram corretamente ao receptor.
+
+### Como funciona o bit de paridade
+
+Durante a transmissão, a USART envia os dados em um formato conhecido como "quadro" (frame), que inclui:
+
+1. Um bit de início (start bit)
+2. De 7 a 9 bits de dados
+3. Um bit de paridade (se habilitado)
+4. Um ou dois bits de parada (stop bits)
+
+Quando o bit de paridade está habilitado, ele é calculado com base nos bits de dados para garantir que o número total de bits "1" seja par ou ímpar, dependendo da configuração.
+
+### Tipos de paridade
+
+* **Paridade par (even)**: o bit de paridade é ajustado para que o número total de bits "1" (nos dados + bit de paridade) seja par.
+* **Paridade ímpar (odd)**: o bit de paridade é ajustado para que o número total de bits "1" seja ímpar.
+* **Sem paridade**: o bit de paridade não é usado, e não há verificação de erro nesse nível.
+
+### Configuração no STM32 (USART2)
+
+Ao configurar a USART2 com a HAL da ST (ou diretamente via registradores), você precisa definir:
+
+```c
+huart2.Init.Parity = UART_PARITY_EVEN; // ou UART_PARITY_ODD
+huart2.Init.WordLength = UART_WORDLENGTH_9B; // Necessário para 8 bits de dados + 1 de paridade
+```
+
+Se estiver usando paridade, o comprimento da palavra deve ser 9 bits para que 8 bits sejam de dados e 1 bit seja reservado para a paridade.
+
+### Recepção com verificação de paridade
+
+O hardware da USART verifica automaticamente se a paridade recebida está correta. Se houver um erro de paridade, um flag é ativado (`PE` - Parity Error), e isso pode ser tratado via interrupção ou checado manualmente.
+
+### Exemplo
+
+Se você enviar o byte `0b10110010`, que tem 4 bits "1", e a paridade for do tipo "par":
+
+* O bit de paridade será 0, pois o número de bits "1" já é par.
+* O transmissor enviará: start bit + 8 bits de dados + bit de paridade (0) + stop bit
+
+Se ocorrer erro na linha de transmissão (por exemplo, um bit virar), o receptor detecta a inconsistência entre os dados e o bit de paridade e sinaliza o erro.
+
