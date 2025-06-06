@@ -1,6 +1,3 @@
-Claro! Abaixo está o material **sem ícones**, mantendo o conteúdo técnico e a estrutura.
-
----
 
 ## Comunicação Serial USART no ESP32
 
